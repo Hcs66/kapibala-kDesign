@@ -1,0 +1,15 @@
+{
+  "name": "kapibala-plugins",
+  "description": "Kapibala 团队 Claude Code 插件市场。当前提供管理后台前端设计与工程标准。",
+  "owner": {
+    "name": "Kapibala"
+  },
+  "plugins": [
+    {
+      "name": "kapibala-design-admin",
+      "source": "./plugins/kapibala-design-admin",
+      "description": "Kapibala Web 管理后台前端设计与工程标准 skill(token / statusMap / i18n / 权限 / logger / 数据层 + 可复制落地物)。",
+      "version": "1.0.0"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "app": { "name": "Admin" },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "loadError": "Failed to load",
+    "errorBoundary": "Something went wrong",
+    "empty": "No data",
+    "mock": "Demo · pending integration"
+  },
+  "status": {
+    "unknown": "Unknown",
+    "entity": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "processing": "Processing",
+      "warning": "Warning",
+      "failed": "Failed",
+      "archived": "Archived"
+    },
+    "health": { "ok": "Healthy", "degraded": "Degraded", "down": "Down" },
+    "severity": { "info": "Info", "warning": "Warning", "error": "Error" },
+    "ws": { "online": "Connected", "reconnecting": "Reconnecting", "offline": "Disconnected" }
+  }
+}

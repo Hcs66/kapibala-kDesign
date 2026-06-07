@@ -1,0 +1,166 @@
+/**
+ * Kapibala_Design_Admin — 全局样式与设计 token (Tailwind CSS v4)
+ *
+ * 用法: 在入口 (main.tsx) `import './globals.css'`。
+ * v4 不需要 tailwind.config.ts —— token 直接写进 @theme。
+ * 颜色为 OKLCH (从实战项目验证过的 HSL 精确换算)。
+ *
+ * 暗色模式: 给 <html> 加 .dark class (用 next-themes 或自管)。
+ *
+ * → v3 项目改造见 ./tailwind.config.ts 注释 + ../references/tokens.md「v3 备注」。
+ */
+
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* .dark class 驱动暗色 (而非媒体查询) */
+@custom-variant dark (&:is(.dark *));
+
+/* ─────────────── 语义 token (light) ─────────────── */
+:root {
+  --radius: 0.5rem;
+
+  /* 品牌主色 —— 部署期由 VITE_PRIMARY_COLOR 覆盖。默认 ≈ #2563eb */
+  --brand: oklch(0.5449 0.2154 262.74);
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.1963 0.0092 285.53);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.1963 0.0092 285.53);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.1963 0.0092 285.53);
+
+  /* primary / ring 跟随 brand —— 改 --brand 即换全局主色 */
+  --primary: var(--brand);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.9683 0.0014 286.37);
+  --secondary-foreground: oklch(0.2583 0.0128 285.47);
+  --muted: oklch(0.9683 0.0014 286.37);
+  --muted-foreground: oklch(0.5504 0.0144 285.92);
+  --accent: oklch(0.9683 0.0014 286.37);
+  --accent-foreground: oklch(0.2583 0.0128 285.47);
+  --destructive: oklch(0.5786 0.2137 27.17);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.9197 0.0041 286.32);
+  --input: oklch(0.9197 0.0041 286.32);
+  --ring: var(--brand);
+
+  /* 状态语义色 —— 对齐 statusMap.ts 的 6 个 tone (primary 复用 brand) */
+  --status-success: oklch(0.6515 0.1515 152.83);
+  --status-warning: oklch(0.712 0.1539 66.33);
+  --status-destructive: oklch(0.6023 0.1931 26.73);
+  --status-info: oklch(0.5928 0.1588 252.51);
+  --status-muted: oklch(0.5843 0.0154 285.91);
+}
+
+/* ─────────────── 语义 token (dark) ─────────────── */
+.dark {
+  --background: oklch(0.1776 0.0044 285.95);
+  --foreground: oklch(0.9197 0.0041 286.32);
+  --card: oklch(0.2111 0.005 285.97);
+  --card-foreground: oklch(0.9197 0.0041 286.32);
+  --popover: oklch(0.2323 0.0058 285.94);
+  --popover-foreground: oklch(0.9197 0.0041 286.32);
+  --primary: var(--brand);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.2747 0.006 286);
+  --secondary-foreground: oklch(0.9197 0.0041 286.32);
+  --muted: oklch(0.2747 0.006 286);
+  --muted-foreground: oklch(0.6695 0.0149 285.99);
+  --accent: oklch(0.2747 0.006 286);
+  --accent-foreground: oklch(0.9197 0.0041 286.32);
+  --destructive: oklch(0.5199 0.1791 26.06);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.2948 0.0066 285.99);
+  --input: oklch(0.2948 0.0066 285.99);
+  --ring: var(--brand);
+
+  --status-success: oklch(0.7272 0.1507 154.25);
+  --status-warning: oklch(0.7399 0.1312 72.04);
+  --status-destructive: oklch(0.6345 0.1621 24.78);
+  --status-info: oklch(0.6517 0.1262 250.35);
+  --status-muted: oklch(0.6695 0.0149 285.99);
+}
+
+/* ─────────────── @theme: token → Tailwind utility ───────────────
+ * 让 bg-background / text-muted-foreground / bg-status-success/10 等生效。
+ * @theme inline 表示引用上面的 CSS 变量 (而非内联展开)。 */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-brand: var(--brand);
+
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-destructive: var(--status-destructive);
+  --color-status-info: var(--status-info);
+  --color-status-muted: var(--status-muted);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui,
+    'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', -apple-system,
+    BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.03);
+  --shadow-pop: 0 8px 24px -8px rgb(15 23 42 / 0.14),
+    0 2px 8px -4px rgb(15 23 42 / 0.06);
+}
+
+/* ─────────────── base ─────────────── */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+}
+
+/* 表格数字对齐 */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────── 可选皮肤 (「智能层」视觉语言, 默认不启用) ───────────────
+ * 需要玻璃拟态 / AI 卡片时取用; 不需要可整段删除。 */
+@layer components {
+  .glass-panel {
+    background-color: color-mix(in oklch, var(--color-card) 80%, transparent);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border);
+  }
+  .ai-tint {
+    background-color: color-mix(in oklch, var(--color-brand) 5%, transparent);
+  }
+  .ai-glow {
+    box-shadow:
+      0 0 15px -3px color-mix(in oklch, var(--color-brand) 15%, transparent),
+      0 0 6px -2px color-mix(in oklch, var(--color-brand) 10%, transparent);
+  }
+}
