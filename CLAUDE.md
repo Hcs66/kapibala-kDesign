@@ -64,3 +64,14 @@ Constraints 1, 3, 4, 5, 7, 8 are enforced by `assets/eslint.config.js` (custom `
 - **Tailwind v4 is the primary baseline; v3 is a documented fallback.** Token tables and `tailwind.config.ts` carry both — when you touch one form, update the v3 note too.
 - **Placeholders in the kit are intentional.** `eslint.config.js` has `PRODUCT_BRAND_REGEX = (your-product-name)` and `statusMap.ts` domain tables are examples to be replaced per project — don't "fix" them to a concrete value.
 - Docs are bilingual-leaning Chinese; match the existing voice and the dense table-driven format when adding to a chapter.
+
+## Releasing a new version
+
+Teams install from the marketplace, which resolves from the **default branch (`main`)**, so a release = changes on `main` + a version tag. Order matters: **merge to `main` first, then tag** (tagging a feature-branch commit can leave the tag pointing at a commit that isn't on `main` after a squash merge).
+
+1. Land the changes on `main` (PR merge).
+2. Bump **both** `version` fields to the new number (e.g. `1.1.0`): `plugins/kapibala-design-admin/.claude-plugin/plugin.json` **and** the matching entry in `.claude-plugin/marketplace.json`. They must agree — `claude plugin tag` validates this and fails if they drift (that mismatch check is the guardrail).
+3. From an up-to-date `main`: `claude plugin tag ./plugins/kapibala-design-admin` → creates `kapibala-design-admin--v<version>`.
+4. Push the tag: `git push origin refs/tags/kapibala-design-admin--v<version>`.
+
+Tagging is optional (without a tag, installs track the latest `main` commit); tag when you want teammates to be able to pin a version. v1.0.0 shipped this way (tag `kapibala-design-admin--v1.0.0` on the PR #1 merge commit).
