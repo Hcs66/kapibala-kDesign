@@ -1,0 +1,27 @@
+{
+  "app": { "name": "管理后台" },
+  "common": {
+    "ok": "确定",
+    "cancel": "取消",
+    "retry": "重试",
+    "loadError": "加载失败",
+    "errorBoundary": "页面出错了",
+    "empty": "暂无数据",
+    "mock": "演示 · 待对接"
+  },
+  "status": {
+    "unknown": "未知",
+    "entity": {
+      "active": "启用",
+      "inactive": "停用",
+      "pending": "待处理",
+      "processing": "处理中",
+      "warning": "警示",
+      "failed": "失败",
+      "archived": "已归档"
+    },
+    "health": { "ok": "正常", "degraded": "降级", "down": "故障" },
+    "severity": { "info": "信息", "warning": "警告", "error": "错误" },
+    "ws": { "online": "已连接", "reconnecting": "重连中", "offline": "已断开" }
+  }
+}

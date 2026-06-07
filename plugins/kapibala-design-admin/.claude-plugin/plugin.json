@@ -1,0 +1,15 @@
+{
+  "name": "kapibala-design-admin",
+  "description": "Kapibala 团队 Web 管理后台前端设计与工程标准(React + Vite + TypeScript + Tailwind v4 + shadcn/ui)。提供 design token、statusMap 状态色系统、i18n、权限门控、logger、数据层约定与可复制落地物。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Kapibala"
+  },
+  "keywords": [
+    "design-system",
+    "admin",
+    "react",
+    "tailwind",
+    "shadcn"
+  ]
+}
