@@ -9,7 +9,7 @@
       "name": "kapibala-design-admin",
       "source": "./plugins/kapibala-design-admin",
       "description": "Kapibala Web 管理后台前端设计与工程标准 skill(token / statusMap / i18n / 权限 / logger / 数据层 + 可复制落地物)。",
-      "version": "1.0.0"
+      "version": "1.1.0"
     }
   ]
 }
