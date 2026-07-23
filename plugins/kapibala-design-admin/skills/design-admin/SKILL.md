@@ -48,8 +48,10 @@ description: >-
 | `statusMap.ts` | `src/lib/statusMap.ts` | 状态色单源;按业务追加域表 |
 | `lib/cn.ts` | `src/lib/cn.ts` | `cn()` className 合并 |
 | `lib/logger.ts` | `src/lib/logger.ts` | 唯一 console sink;禁裸 `console.*` |
+| `lib/whitelabel.ts` | `src/lib/whitelabel.ts` | 白标:`VITE_PRIMARY_COLOR` → `--brand`,`--brand-2` 派生;启动时调 `applyWhiteLabelTheme()` |
+| `lib/identityGradient.ts` | `src/lib/identityGradient.ts` | 头像身份渐变(非语义身份色,配 globals.css `.identity-1…6`) |
 | `contexts/AuthContext.tsx` | `src/contexts/AuthContext.tsx` | `useHasPermission` 来源;无 Provider 优雅降级 |
-| `components/*.tsx` | `src/components/` | `StatusBadge` `PermissionGate` `QueryState` `EmptyState` `MockBadge` `ErrorBoundary` |
+| `components/*.tsx` | `src/components/` | `StatusBadge` `PermissionGate` `QueryState` `EmptyState` `PageHeader` `MockBadge` `ErrorBoundary` |
 | `i18n/locales/*.json` | `src/i18n/locales/` | `zh-CN` / `en` 骨架(`common.*` + `status.*`);两份结构须一致 |
 | `eslint.config.js` | 项目根 `eslint.config.js` | 改 `PRODUCT_BRAND_REGEX` 为自家品牌词 |
 | `components.json` | 项目根 `components.json` | shadcn 配置;`npx shadcn add` 用 |
@@ -66,7 +68,7 @@ description: >-
 | 档位 | 内容 | 说明 |
 |---|---|---|
 | **强制(MUST)** | token 命名体系、状态色走 statusMap、i18n 不硬编码、数据层纪律、日志不静默、ESLint 规则集 | 跨项目一致性的地基,PR review / CI 卡 |
-| **可选(MAY)** | 玻璃拟态、AI-tint 卡片、Indigo/Slate 配色、虚拟滚动、Zustand | 视觉皮肤与场景能力,按项目需要取用;默认是中性蓝 brand + 标准卡片 |
+| **可选(MAY)** | 玻璃拟态、AI-tint 卡片、身份渐变头像、虚拟滚动、Zustand | 视觉皮肤与场景能力,按项目需要取用;默认皮肤是靛紫 brand(可白标)+ 表面梯 + 标准卡片 |
 
 判断口诀:**「机制」强制,「皮肤」可选**。statusMap 的 *机制* 必须用;具体配色值可白标替换。
 

@@ -3,7 +3,7 @@
  *
  * 用法: 在入口 (main.tsx) `import './globals.css'`。
  * v4 不需要 tailwind.config.ts —— token 直接写进 @theme。
- * 颜色为 OKLCH (从实战项目验证过的 HSL 精确换算)。
+ * 颜色为 OKLCH (从实战项目 v1.3 验证过的 HSL 精确换算, 各值旁标注来源 HSL)。
  *
  * 暗色模式: 给 <html> 加 .dark class (用 next-themes 或自管)。
  *
@@ -20,76 +20,143 @@
 :root {
   --radius: 0.5rem;
 
-  /* 品牌主色 —— 部署期由 VITE_PRIMARY_COLOR 覆盖。默认 ≈ #2563eb */
-  --brand: oklch(0.5449 0.2154 262.74);
+  /* 品牌主色 —— 部署期由 VITE_PRIMARY_COLOR 覆盖 (见 lib/whitelabel.ts)。
+     默认 ≈ #4F46E5 (靛)。色相选择的硬约束: 与 status 色相全部拉开 ≥20°
+     (info 210° / success 145° / warning 35° / destructive 2°) —— 品牌与语义
+     不抢同一色相, 两边才都敢用重。
+
+     --brand-2 是渐变终点 (品牌标记 / 主 CTA / hero KPI 渐变裁字), 由 brand 按
+     固定偏移 (+19° 色相 / +8% 饱和 / +7% 明度) 派生 —— 白标客户只配一个主色,
+     whitelabel.ts 的 deriveBrand2 同步推出它, 不接受独立配置 (防双写入点漂移)。
+
+     ⚠ brand 亮暗同值 (.dark 里刻意不重定义): 它是实心按钮底 + 白字,
+     暗色下提亮反而降低白字对比度。L=59% 时白字 ≈4.6:1, 达 UI 组件 AA。 */
+  --brand: oklch(0.514 0.2276 276.98); /* 243 75% 59% ≈ #4F46E5 */
+  --brand-2: oklch(0.6176 0.2072 296.77); /* 262 83% 66% ≈ #8B5CF6 */
 
   --background: oklch(1 0 0);
-  --foreground: oklch(0.1963 0.0092 285.53);
+  --foreground: oklch(0.2081 0.0243 291.78); /* 250 22% 11% */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.1963 0.0092 285.53);
+  --card-foreground: oklch(0.2081 0.0243 291.78);
+
+  /* 表面抬升梯 (elevation ladder) —— 回答「这一层比它的底高还是低」:
+     亮色: canvas 96.5% (主内容区画布) < card 100% (卡片 + 侧栏/顶栏等 chrome)。
+     sunken 是相对卡片的内凹面 (输入框 / 下拉框 / 表头), 只比卡片暗 2pp ——
+     刻意做轻, 重了密集表格页显脏 (实战验收结论)。
+     暗色方向相反: sunken 靠「更亮」表达内凹, 见 .dark。
+
+     中性色带一丝主色偏向 (hue 250, 非冷灰 240) —— 「选过的灰」。
+     明度梯子关系是验收过的基线, 调色相时明度不动。 */
+  --canvas: oklch(0.9695 0.0048 293.97); /* 250 20% 96.5% */
+  --sunken: oklch(0.9833 0.0019 294.03); /* 250 14% 98% */
+
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.1963 0.0092 285.53);
+  --popover-foreground: oklch(0.2081 0.0243 291.78);
 
   /* primary / ring 跟随 brand —— 改 --brand 即换全局主色 */
   --primary: var(--brand);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.9683 0.0014 286.37);
-  --secondary-foreground: oklch(0.2583 0.0128 285.47);
-  --muted: oklch(0.9683 0.0014 286.37);
-  --muted-foreground: oklch(0.5504 0.0144 285.92);
-  --accent: oklch(0.9683 0.0014 286.37);
-  --accent-foreground: oklch(0.2583 0.0128 285.47);
-  --destructive: oklch(0.5786 0.2137 27.17);
+  --secondary: oklch(0.9664 0.0038 293.99); /* 250 14% 96% */
+  --secondary-foreground: oklch(0.2519 0.023 292.3); /* 250 16% 15% */
+  --muted: oklch(0.9664 0.0038 293.99);
+  --muted-foreground: oklch(0.5488 0.0297 293.04); /* 250 8% 47% */
+  /* ⚠ accent 在 shadcn 原语里是 hover 底 (DropdownMenuItem / SelectItem /
+     CommandItem / Button.ghost)。它保持中性是对的, 不要改成品牌色 ——
+     那会让所有菜单项一 hover 就变成实心品牌色。
+     「选中态」的标准写法是 `bg-brand/10 text-brand`, 与 accent 无关。 */
+  --accent: oklch(0.9664 0.0038 293.99);
+  --accent-foreground: oklch(0.2519 0.023 292.3);
+  --destructive: oklch(0.5786 0.2137 27.17); /* 0 72% 51% */
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.9197 0.0041 286.32);
-  --input: oklch(0.9197 0.0041 286.32);
+  --border: oklch(0.9156 0.0097 293.87); /* 250 14% 90% */
+  --input: oklch(0.9156 0.0097 293.87);
   --ring: var(--brand);
 
-  /* 状态语义色 —— 对齐 statusMap.ts 的 6 个 tone (primary 复用 brand) */
-  --status-success: oklch(0.6515 0.1515 152.83);
-  --status-warning: oklch(0.712 0.1539 66.33);
-  --status-destructive: oklch(0.6023 0.1931 26.73);
-  --status-info: oklch(0.5928 0.1588 252.51);
-  --status-muted: oklch(0.5843 0.0154 285.91);
+  /* 状态语义色 —— 对齐 statusMap.ts 的 6 个 tone (primary 复用 brand)。
+     ⚠ 状态色是语义, 不是装饰: 视觉升级 / 白标换肤都不动这五个值。 */
+  --status-success: oklch(0.6515 0.1515 152.83); /* 145 58% 42% */
+  --status-warning: oklch(0.712 0.1539 66.33); /* 35 84% 48% */
+  --status-destructive: oklch(0.6023 0.1931 26.73); /* 2 70% 55% */
+  --status-info: oklch(0.5928 0.1588 252.51); /* 210 70% 50% */
+  --status-muted: oklch(0.5796 0.0233 293.31); /* 250 6% 50% */
+
+  /* 深度 —— 整条阴影一个变量, 亮暗各一套, shadow-card / shadow-pop 两主题共用。
+     亮色阴影用「靛紫墨」(30 27 75) 而非纯黑: 纯黑在浅底上发灰显脏。
+     card-highlight 是卡片顶边 1px 内高光: 亮色必须 transparent (白卡加白高光
+     只会糊掉上边框), 它是暗色专属的厚度手段 (见 .dark)。
+     ⚠ 阴影颜色必须写字面量。v3 项目尤其注意: 不能拆成
+     rgb(var(--x) / var(--y)) 塞进 tailwind.config 的 boxShadow —— Tailwind v3
+     解析不了嵌套 var(), 会把颜色整个替换掉, 阴影完全不可见 (实战踩坑,
+     详见 ../references/rationale.md)。 */
+  --card-highlight: transparent;
+  --elevation-card: 0 1px 2px -1px rgb(30 27 75 / 0.06),
+    0 4px 14px -6px rgb(30 27 75 / 0.1), inset 0 1px 0 0 var(--card-highlight);
+  --elevation-pop: 0 8px 24px -8px rgb(30 27 75 / 0.16),
+    0 2px 8px -4px rgb(30 27 75 / 0.06), inset 0 1px 0 0 var(--card-highlight);
+
+  /* 动效 —— 作用是「确认我点到了」, 不是表演。管理后台是高频操作工具,
+     超过 200ms 的过渡就是拖累, 故 base 定 180ms。
+     全部走文件底部的 prefers-reduced-motion 兜底。 */
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-slow: 280ms;
 }
 
 /* ─────────────── 语义 token (dark) ─────────────── */
 .dark {
-  --background: oklch(0.1776 0.0044 285.95);
-  --foreground: oklch(0.9197 0.0041 286.32);
-  --card: oklch(0.2111 0.005 285.97);
-  --card-foreground: oklch(0.9197 0.0041 286.32);
-  --popover: oklch(0.2323 0.0058 285.94);
-  --popover-foreground: oklch(0.9197 0.0041 286.32);
+  /* ⚠ --brand / --brand-2 刻意不在此重定义 —— 见 :root 注释 (白字对比度)。 */
+  --background: oklch(0.1734 0.0103 292.93); /* 250 14% 7% */
+  --foreground: oklch(0.9167 0.0083 293.9); /* 250 12% 90% */
+  --card: oklch(0.2163 0.0132 292.91); /* 250 12% 11% — 比 canvas 高 4pp, 卡片真正浮起 */
+  --card-foreground: oklch(0.9167 0.0083 293.9);
+
+  /* 暗色下 sunken 比 card 更亮 (输入框内嵌感靠亮度差, 不靠「更暗」),
+     方向与亮色相反; 差收窄到 3pp, 避免输入框在卡片上过跳。 */
+  --canvas: oklch(0.1734 0.0103 292.93); /* 250 14% 7% */
+  --sunken: oklch(0.2485 0.0135 293.04); /* 250 10% 14% */
+
+  --popover: oklch(0.2265 0.0142 292.87); /* 250 12% 12% */
+  --popover-foreground: oklch(0.9167 0.0083 293.9);
   --primary: var(--brand);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.2747 0.006 286);
-  --secondary-foreground: oklch(0.9197 0.0041 286.32);
-  --muted: oklch(0.2747 0.006 286);
-  --muted-foreground: oklch(0.6695 0.0149 285.99);
-  --accent: oklch(0.2747 0.006 286);
-  --accent-foreground: oklch(0.9197 0.0041 286.32);
-  --destructive: oklch(0.5199 0.1791 26.06);
+  --secondary: oklch(0.2682 0.0151 293); /* 250 10% 16% */
+  --secondary-foreground: oklch(0.9167 0.0083 293.9);
+  --muted: oklch(0.2682 0.0151 293);
+  --muted-foreground: oklch(0.6638 0.0241 293.38); /* 250 8% 60% */
+  --accent: oklch(0.2682 0.0151 293);
+  --accent-foreground: oklch(0.9167 0.0083 293.9);
+  --destructive: oklch(0.5199 0.1791 26.06); /* 0 62% 45% */
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.2948 0.0066 285.99);
-  --input: oklch(0.2948 0.0066 285.99);
+  --border: oklch(0.2876 0.0167 292.96); /* 250 10% 18% */
+  --input: oklch(0.2876 0.0167 292.96);
   --ring: var(--brand);
 
-  --status-success: oklch(0.7272 0.1507 154.25);
-  --status-warning: oklch(0.7399 0.1312 72.04);
-  --status-destructive: oklch(0.6345 0.1621 24.78);
-  --status-info: oklch(0.6517 0.1262 250.35);
-  --status-muted: oklch(0.6695 0.0149 285.99);
+  --status-success: oklch(0.7272 0.1507 154.25); /* 145 50% 52% */
+  --status-warning: oklch(0.7399 0.1312 72.04); /* 35 70% 56% */
+  --status-destructive: oklch(0.6345 0.1621 24.78); /* 2 65% 60% */
+  --status-info: oklch(0.6517 0.1262 250.35); /* 210 65% 58% */
+  --status-muted: oklch(0.6638 0.0241 293.38); /* 250 8% 60% */
+
+  /* 暗色深度: 阴影用纯黑 + 高得多的 alpha (靛紫墨在深底上看不见)。
+     card-highlight 从 transparent 变微白 —— 这才是暗色卡片「有厚度」的来源
+     (Linear / Vercel 暗色的做法: 纯亮度差做不出「受光面」)。 */
+  --card-highlight: oklch(1 0 0 / 0.06);
+  --elevation-card: 0 1px 2px -1px rgb(0 0 0 / 0.3),
+    0 4px 14px -6px rgb(0 0 0 / 0.45), inset 0 1px 0 0 var(--card-highlight);
+  --elevation-pop: 0 8px 24px -8px rgb(0 0 0 / 0.6),
+    0 2px 8px -4px rgb(0 0 0 / 0.3), inset 0 1px 0 0 var(--card-highlight);
 }
 
 /* ─────────────── @theme: token → Tailwind utility ───────────────
- * 让 bg-background / text-muted-foreground / bg-status-success/10 等生效。
- * @theme inline 表示引用上面的 CSS 变量 (而非内联展开)。 */
+ * 让 bg-background / bg-canvas / text-muted-foreground / bg-status-success/10
+ * 等生效。@theme inline 表示引用上面的 CSS 变量 (而非内联展开)。 */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-canvas: var(--canvas);
+  --color-sunken: var(--sunken);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -107,6 +174,7 @@
   --color-ring: var(--ring);
 
   --color-brand: var(--brand);
+  --color-brand-2: var(--brand-2);
 
   --color-status-success: var(--status-success);
   --color-status-warning: var(--status-warning);
@@ -124,9 +192,23 @@
     BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.03);
-  --shadow-pop: 0 8px 24px -8px rgb(15 23 42 / 0.14),
-    0 2px 8px -4px rgb(15 23 42 / 0.06);
+  /* 阴影按主题切换 —— 值在 :root / .dark 的 --elevation-* 里 */
+  --shadow-card: var(--elevation-card);
+  --shadow-pop: var(--elevation-pop);
+
+  /* 全站唯一缓动 (覆盖 Tailwind 默认 ease-out): 收尾减速, 反馈「落地」 */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* duration-fast/base/slow —— 与 v3 版类名一致 (v4 无 duration 主题命名空间) */
+@utility duration-fast {
+  transition-duration: var(--motion-fast);
+}
+@utility duration-base {
+  transition-duration: var(--motion-base);
+}
+@utility duration-slow {
+  transition-duration: var(--motion-slow);
 }
 
 /* ─────────────── base ─────────────── */
@@ -147,8 +229,67 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ─────────────── 身份渐变 (identity gradient) ───────────────
+ * 配套 lib/identityGradient.ts: 按实体 ID 哈希取一个, 用在头像位。
+ * 不承载任何语义 —— 纯身份识别 (同一实体永远同色, 长列表余光可认)。
+ * 色板必须避开 status 色相区 ±20° (红 2° / 琥珀 35° / 绿 145° / 蓝 210°),
+ * 否则绿头像会被误读成「在线」; 可用区间: 青 [165–190] + 靛→紫→品红 [230–342]。
+ *
+ * ⚠ 刻意写在 @layer 之外的裸 CSS, 不要「顺手」塞进 @layer components ——
+ * 类名是运行时哈希拼出来的 (`identity-${n}`), 源码里没有字面量。Tailwind v3
+ * 静态扫描找不到会把 @layer 里的规则 purge 掉, 头像变成透明圆 + 白字 =
+ * 白底上彻底隐形 (实战两次踩坑, 见 rationale.md)。裸 CSS 不受 purge 影响。
+ * v3 项目另在 tailwind.config safelist 加 /^identity-[1-6]$/ 作双保险。 */
+.identity-1,
+.identity-2,
+.identity-3,
+.identity-4,
+.identity-5,
+.identity-6 {
+  /* 渐变底一律白字 (六个渐变明度都在 42–68% 区间, 白字对比稳定过 AA)。
+     兜底纯色: 万一 background-image 没画出来, 不至于白字白底。 */
+  background-color: hsl(243 75% 62%);
+  color: hsl(0 0% 100%);
+  border-color: transparent;
+}
+.identity-1 {
+  background-image: linear-gradient(135deg, hsl(243 75% 62%), hsl(262 83% 68%));
+}
+.identity-2 {
+  background-image: linear-gradient(135deg, hsl(268 72% 62%), hsl(292 68% 66%));
+}
+.identity-3 {
+  background-image: linear-gradient(135deg, hsl(296 66% 60%), hsl(320 68% 64%));
+}
+.identity-4 {
+  background-image: linear-gradient(135deg, hsl(320 65% 60%), hsl(338 70% 64%));
+}
+.identity-5 {
+  background-image: linear-gradient(135deg, hsl(236 72% 60%), hsl(258 76% 64%));
+}
+.identity-6 {
+  background-image: linear-gradient(135deg, hsl(168 62% 42%), hsl(186 70% 46%));
+}
+
+/* ─────────────── reduced motion 全局兜底 ───────────────
+ * 把所有动画与过渡压到接近 0, 而不是 `none`: 完全去掉会让依赖
+ * transitionend / animationend 的 Radix 原语 (Dialog / Sheet / Popover 的退场)
+ * 收不到事件而卡住不卸载。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ─────────────── 可选皮肤 (「智能层」视觉语言, 默认不启用) ───────────────
- * 需要玻璃拟态 / AI 卡片时取用; 不需要可整段删除。 */
+ * 需要玻璃拟态 / AI 卡片时取用; 不需要可整段删除。
+ * ⚠ 密集表格型后台不要启用玻璃拟态 —— 模糊层拖垮可读性与渲染性能,
+ * 它只适合低密度看板 / 大屏场景 (见 principles.md §9)。 */
 @layer components {
   .glass-panel {
     background-color: color-mix(in oklch, var(--color-card) 80%, transparent);

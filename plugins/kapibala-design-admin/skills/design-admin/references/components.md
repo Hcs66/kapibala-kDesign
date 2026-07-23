@@ -32,6 +32,8 @@ src/pages/**/  业务组件 (页面 + 页面专属子组件就近放)
 - 原语保持 vendored 原样,**ESLint 对 `ui/**` 放宽**(不卡 i18n / no-restricted-syntax,见 conventions §ESLint)。
 - 需要变体时改 CVA `variants`,**别 fork 出第二个组件**。
 - 所有原语用 `cn()`(`lib/cn.ts`)合并 class。
+- **`Card` 加两个 prop**(实战约定):`asChild`(卡片样式套到子元素上,可点击卡片 → `<Card asChild><button>`,不再包一层 div)、`interactive`(hover 抬升 2px + 阴影加深,`duration-base ease-out`)。`interactive` **只给真正可点的卡片**——静态卡片加了会骗人,容器类卡片(表格外壳/表单面板)一律不加。
+- `CardTitle` 字阶 `text-base font-semibold tracking-tight`(16px,H2 级,见 principles §2)。
 
 ---
 
@@ -39,7 +41,7 @@ src/pages/**/  业务组件 (页面 + 页面专属子组件就近放)
 
 下面是管理后台反复需要、且承载本标准纪律的组件。给出**契约**,实现可按项目微调。
 
-> **已有可直接拷的实现**:`StatusBadge` / `PermissionGate` / `QueryState` / `EmptyState` / `MockBadge` / `ErrorBoundary` 以及 `AuthContext`(`useHasPermission`)都在 `../assets/components/`、`../assets/contexts/`。优先拷现成的,下面的契约只是说明各自的铁律。
+> **已有可直接拷的实现**:`StatusBadge` / `PermissionGate` / `QueryState` / `EmptyState` / `PageHeader` / `MockBadge` / `ErrorBoundary` 以及 `AuthContext`(`useHasPermission`)都在 `../assets/components/`、`../assets/contexts/`。优先拷现成的,下面的契约只是说明各自的铁律。
 
 ### 3.1 `StatusBadge` — 状态徽章(承载状态色系统)
 
@@ -114,7 +116,26 @@ interface EmptyStateProps {
 }
 ```
 
-### 3.5 `MockBadge` / `MockNotice` — 演示数据标记(承载"后端缺口显式化")
+约定(空态是新用户和低频页面的第一印象,也是最容易「冷」的界面):
+
+- 图标用**品牌光晕徽章**(`bg-brand/[0.07] text-brand` + 内描边),不用半透明大灰图标——那读起来像"这里坏了"而不是"还没开始"。
+- 文案写「**会发生什么**」(如"任务跑起来后结果会自动出现在这里"),并区分"无数据" vs "筛选无匹配"。
+- 尽量给一个明确的下一步 `action`。
+
+### 3.5 `PageHeader` — 页头(全站唯一写法)
+
+```tsx
+interface PageHeaderProps {
+  title: ReactNode          // 渲染成每页唯一的 <h1>: text-2xl font-bold tracking-tight
+  badge?: ReactNode         // 标题右侧小挂件 (如 <MockBadge/>), 跟标题走, 不进 actions
+  description?: ReactNode   // 标题下一行说明/统计摘要 (text-sm text-muted-foreground)
+  actions?: ReactNode       // 右上角操作区 (按钮组/下拉)
+}
+```
+
+铁律:**每页只有一个 `<h1>`**,且只能来自 `PageHeader`;页内区块标题从 h2 起。页头字阶(24px/700)是全站唯一的一级落点,别页面各写各的字号——改一个组件全站生效。
+
+### 3.6 `MockBadge` / `MockNotice` — 演示数据标记(承载"后端缺口显式化")
 
 前端能力领先后端、或用占位数据时,**必须**挂可见标记「演示 · 待对接」,不许让占位数据冒充真数据。
 
@@ -125,12 +146,12 @@ export function MockBadge() {
 }
 ```
 
-### 3.6 `ErrorBoundary` / `ErrorFallback` — 错误边界
+### 3.7 `ErrorBoundary` / `ErrorFallback` — 错误边界
 
 - 根级一个(包整个 App),路由级每个 lazy 页面外再包一层 Suspense + Boundary。
 - `ErrorFallback` 内**必须** `logger.error` 上报(禁止静默)。
 
-### 3.7 `CopyButton` / `LanguageSwitcher` / `ConfirmDialog`
+### 3.8 `CopyButton` / `LanguageSwitcher` / `ConfirmDialog`
 
 - `CopyButton`:复制到剪贴板 + 成功 toast。
 - `LanguageSwitcher`:切 i18n 语言,写 localStorage。
@@ -173,7 +194,9 @@ export const MENU: MenuItem[] = [ /* ... */ ]
 
 | 需求 | 用什么 |
 |---|---|
+| 页头(标题 + 操作区) | `PageHeader`(每页唯一 h1) |
 | 状态展示 | `StatusBadge`(必经 statusMap) |
+| 头像底色 | `identityGradientClass(id)`(`lib/identityGradient.ts`,非语义身份色) |
 | 权限控制按钮/区块 | `<PermissionGate>` / `useHasPermission()` |
 | 列表/详情三态 | `QueryState` + `EmptyState` |
 | 危险操作 | `ConfirmDialog`(destructive) |
